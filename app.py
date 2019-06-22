@@ -1,9 +1,9 @@
 from flask import Flask, request
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app)
-
 
 @app.route("/", methods=["GET", "POST"])
 def postNgrokAddress():
@@ -18,15 +18,24 @@ def postNgrokAddress():
         return "Success"
 
 def writeAddr(addr):
-    with open("./addr", "w") as f:
-        f.write(addr)
-        return True
+    with getConnection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id from urls order by id desc limit 1")
+            (id,) = cur.fetchone()
+            id+=1
+            cur.execute("INSERT INTO urls VALUES (%d, %s)", (id, addr))
+    return True
+
 
 def readAddr():
-    addr = ""
-    try:
-        with open("./addr") as f:
-            addr = f.read()
-    except:
-        return ""
-    return addr
+    with getConnection() as conn:
+        with conn.cursor () as cur:
+            cur.execute("SELECT url FROM urls ORDER BY id DESC LIMIT 1")
+            addr = cur.fetchone()
+            return addr
+    return "Error: None"
+
+
+def getConnection():
+    db_url = os.environ.get("DATABASE_URL")
+    return psycopg2.connect(db_url)
