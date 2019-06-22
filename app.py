@@ -9,9 +9,10 @@ CORS(app)
 @app.route("/", methods=["GET", "POST"])
 def postNgrokAddress():
     if request.method == "GET":
-        if readAddr() == "":
+        ngrokAddr = readAddr()
+        if ngrokAddr == "":
             return "Fatal: ngrok address is not provided yet."
-        return readAddr()
+        return ngrokAddr
     elif request.method == "POST":
         if not request.form["addr"]:
             return "Fatal: requested field 'addr' is not provided."
@@ -35,7 +36,7 @@ def readAddr():
             cur.execute("SELECT url FROM urls ORDER BY id DESC LIMIT 1")
             addr = cur.fetchone()
             return addr
-    return "Error: None"
+    return ""
 
 
 def getConnection():
