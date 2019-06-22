@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 import os
+import psycopg2
 
 app = Flask(__name__)
 CORS(app)
@@ -24,6 +25,7 @@ def writeAddr(addr):
             (id,) = cur.fetchone()
             id+=1
             cur.execute("INSERT INTO urls VALUES (%d, %s)", (id, addr))
+        cur.commit()
     return True
 
 
