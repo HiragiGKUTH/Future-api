@@ -34,7 +34,7 @@ def readAddr():
     with getConnection() as conn:
         with conn.cursor () as cur:
             cur.execute("SELECT url FROM urls ORDER BY id DESC LIMIT 1")
-            addr = cur.fetchone()
+            (addr,) = cur.fetchone()
             return addr
     return ""
 
