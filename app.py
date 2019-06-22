@@ -26,7 +26,7 @@ def writeAddr(addr):
             (id,) = cur.fetchone()
             id+=1
             cur.execute("INSERT INTO urls VALUES (%s, %s)", (str(id), addr))
-        cur.commit()
+        conn.commit()
     return True
 
 
